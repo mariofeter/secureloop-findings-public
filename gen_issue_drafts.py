@@ -151,25 +151,6 @@ ASAN_OPTIONS=abort_on_error=0:halt_on_error=0:exitcode=0:detect_leaks=0:handle_a
 ## Full writeup
 
 [{fid}]({writeup_url})
-
-## About SecureLoop
-
-[SecureLoop]({PUBLIC_REPO}) is an experimental ML-guided vulnerability
-discovery system. The pipeline that found this issue:
-
-1. **GNN scorer** ranked rkyv functions by predicted vulnerability likelihood
-   (trained on rustsec.json — paired vuln/patch corpus). Top picks for this
-   crate included `access_pos_unchecked`, `as_ptr_raw`, `deserialize_shared`,
-   and the swiss_table/string repr surfaces — exactly the regions this bug
-   lives in.
-2. **Auto-harness generator** parsed the public API signature and emitted a
-   targeted `fuzz_target!` harness without human-written boilerplate.
-3. **libFuzzer + ASAN + sancov** at `-Cinstrumented` ran the harness until
-   the crash surfaced.
-4. **Closed-loop retrain** — the resulting finding feeds back into the
-   scorer's next training round.
-
-Track record + methodology: [{PUBLIC_REPO}]({PUBLIC_REPO}).
 """
     return f"Title: {meta['title']}\n\n---\n\n{body}"
 

@@ -59,22 +59,3 @@ Validate the index/bucket-count invariant in the validator, not only via `debug_
 ## Full writeup
 
 [2026-05-006_swiss_table_unchecked_assert](https://github.com/mariofeter/secureloop-findings-public/blob/master/findings/rkyv/2026-05-006_swiss_table_unchecked_assert/writeup.md)
-
-## About SecureLoop
-
-[SecureLoop](https://github.com/mariofeter/secureloop-findings-public) is an experimental ML-guided vulnerability
-discovery system. The pipeline that found this issue:
-
-1. **GNN scorer** ranked rkyv functions by predicted vulnerability likelihood
-   (trained on rustsec.json — paired vuln/patch corpus). Top picks for this
-   crate included `access_pos_unchecked`, `as_ptr_raw`, `deserialize_shared`,
-   and the swiss_table/string repr surfaces — exactly the regions this bug
-   lives in.
-2. **Auto-harness generator** parsed the public API signature and emitted a
-   targeted `fuzz_target!` harness without human-written boilerplate.
-3. **libFuzzer + ASAN + sancov** at `-Cinstrumented` ran the harness until
-   the crash surfaced.
-4. **Closed-loop retrain** — the resulting finding feeds back into the
-   scorer's next training round.
-
-Track record + methodology: [https://github.com/mariofeter/secureloop-findings-public](https://github.com/mariofeter/secureloop-findings-public).
