@@ -1,0 +1,67 @@
+Title: Heap-buffer-overflow / OOB read in `from_bytes::<HashMap<String, _>>` via crafted ArchivedString pointer
+
+---
+
+**Affected**: rkyv 0.8.16 (also reproduces on git HEAD `4a841456`)
+**API surface**: safe (`rkyv::from_bytes` / `rkyv::access`)
+**Class**: CWE-125 — out-of-bounds read
+**Severity**: medium
+
+## Summary
+
+`rkyv::from_bytes::<HashMap<String, Vec<u32>>, Error>(data)` triggers a out-of-bounds read on a crafted input. Reproducer
+attached. Stack trace below.
+
+## Reproducer
+
+Harness:
+```rust
+#![no_main]
+use libfuzzer_sys::fuzz_target;
+use std::collections::HashMap;
+use rkyv::rancor::Error;
+
+fuzz_target!(|data: &[u8]| {
+    let _ = rkyv::from_bytes::<HashMap<String, Vec<u32>>, Error>(data);
+});
+```
+
+Build:
+```
+RUSTFLAGS='-Cpasses=sancov-module -Cllvm-args=-sanitizer-coverage-level=3 \
+-Cllvm-args=-sanitizer-coverage-inline-8bit-counters \
+-Cllvm-args=-sanitizer-coverage-pc-table \
+-Cllvm-args=-sanitizer-coverage-trace-compares \
+-Zsanitizer=address' \
+cargo +nightly build --release -Zbuild-std --target x86_64-unknown-linux-gnu
+```
+
+Run with the attached reproducer ([`repro.bin`](https://github.com/mariofeter/secureloop-findings-public/raw/master/findings/rkyv/2026-05-001_hashmap_string_oob_read/repro.bin)):
+```
+ASAN_OPTIONS=abort_on_error=0:halt_on_error=0:exitcode=0:detect_leaks=0:handle_abort=0 \
+  ./target/x86_64-unknown-linux-gnu/release/repro repro.bin
+```
+
+## Sanitizer trace (top frames)
+
+```
+  #0 ArchivedStringRepr::is_inline  (rkyv/src/string/repr.rs:53)
+  #1 ArchivedStringRepr::as_ptr     (rkyv/src/string/repr.rs:70)
+  #2 ArchivedHashTable::lookup
+  #3 from_bytes deserialization path
+```
+
+## Suggested fix area
+
+Containment check on `&ArchivedStringRepr` BEFORE reading any byte from it inside the HashMap entry validator. The current sequence resolves a String pointer via offset, then dereferences without verifying the resulting address is within the buffer bounds.
+
+## Full writeup
+
+[2026-05-001_hashmap_string_oob_read](https://github.com/mariofeter/secureloop-findings-public/blob/master/findings/rkyv/2026-05-001_hashmap_string_oob_read/writeup.md)
+
+## Provenance
+
+Discovered with the assistance of AI-driven fuzzing tooling (SecureLoop — ML-guided
+harness generation + closed-loop learning). Filing per
+[rkyv SECURITY.md](https://github.com/rkyv/rkyv/blob/master/SECURITY.md), which
+directs AI-assisted findings to skip the responsible disclosure window.
