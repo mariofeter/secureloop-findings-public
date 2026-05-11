@@ -11,11 +11,11 @@ and (where filed) the upstream issue tracker.
 
 | ID | Bug class | Severity | Status | Writeup | Upstream issue |
 |---|---|---|---|---|---|
-| 2026-05-001 | OOB read | medium | PUBLIC-DISCLOSED | [hashmap_string_oob_read](findings/rkyv/2026-05-001_hashmap_string_oob_read/writeup.md) | _to be filed_ |
-| 2026-05-002 | OOB read | medium | PUBLIC-DISCLOSED | [hashmap_simd_oob_read](findings/rkyv/2026-05-002_hashmap_simd_oob_read/writeup.md) | _to be filed_ |
-| 2026-05-003 | OOB read | medium | PUBLIC-DISCLOSED | [hashmap_u64_bytes_oob](findings/rkyv/2026-05-003_hashmap_u64_bytes_oob/writeup.md) | _to be filed_ |
-| 2026-05-005 | UAF | high | PUBLIC-DISCLOSED | [complex_struct_uaf](findings/rkyv/2026-05-005_complex_struct_uaf/writeup.md) | _to be filed_ |
-| 2026-05-006 | reachable assertion | high | PUBLIC-DISCLOSED | [swiss_table_unchecked_assert](findings/rkyv/2026-05-006_swiss_table_unchecked_assert/writeup.md) | _to be filed_ |
+| 2026-05-001 | OOB read | medium | PUBLIC-DISCLOSED | [hashmap_string_oob_read](findings/rkyv/2026-05-001_hashmap_string_oob_read/writeup.md) | [rkyv#663](https://github.com/rkyv/rkyv/issues/663) |
+| 2026-05-002 | OOB read | medium | PUBLIC-DISCLOSED | [hashmap_simd_oob_read](findings/rkyv/2026-05-002_hashmap_simd_oob_read/writeup.md) | [rkyv#664](https://github.com/rkyv/rkyv/issues/664) |
+| 2026-05-003 | OOB read | medium | PUBLIC-DISCLOSED | [hashmap_u64_bytes_oob](findings/rkyv/2026-05-003_hashmap_u64_bytes_oob/writeup.md) | [rkyv#665](https://github.com/rkyv/rkyv/issues/665) |
+| 2026-05-005 | UAF | high | PUBLIC-DISCLOSED | [complex_struct_uaf](findings/rkyv/2026-05-005_complex_struct_uaf/writeup.md) | [rkyv#666](https://github.com/rkyv/rkyv/issues/666) |
+| 2026-05-006 | reachable assertion | high | PUBLIC-DISCLOSED | [swiss_table_unchecked_assert](findings/rkyv/2026-05-006_swiss_table_unchecked_assert/writeup.md) | [rkyv#667](https://github.com/rkyv/rkyv/issues/667) |
 
 ---
 
