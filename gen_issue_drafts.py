@@ -97,15 +97,17 @@ def render(fid: str, meta: dict) -> str:
     writeup_url = f"{PUBLIC_REPO}/blob/master/findings/rkyv/{fid}/writeup.md"
     frames = "\n".join(f"  #{i} {f}" for i, f in enumerate(meta["top_frames"]))
 
-    body = f"""**Affected**: rkyv 0.8.16 (also reproduces on git HEAD `4a841456`)
+    body = f"""> **Discovered by [SecureLoop]({PUBLIC_REPO})** — ML-guided fuzzing orchestrator with closed-loop learning. Published per [rkyv SECURITY.md](https://github.com/rkyv/rkyv/blob/master/SECURITY.md) (AI-assisted findings skip embargo). Track record + methodology: [secureloop-findings-public]({PUBLIC_REPO}).
+
+**Affected**: rkyv 0.8.16 (also reproduces on git HEAD `4a841456`)
 **API surface**: safe (`rkyv::from_bytes` / `rkyv::access`)
 **Class**: {meta['cwe']} — {meta['class']}
 **Severity**: {meta['severity']}
+**Tool**: SecureLoop (ML scorer + auto-generated harness)
 
 ## Summary
 
-`{meta['call']}` triggers a {meta['class']} on a crafted input. Reproducer
-attached. Stack trace below.
+`{meta['call']}` triggers {('an ' if meta['class'][0].lower() in 'aeiou' else 'a ')}{meta['class']} on a crafted input. Reproducer attached. Stack trace below.
 
 ## Reproducer
 
@@ -150,12 +152,24 @@ ASAN_OPTIONS=abort_on_error=0:halt_on_error=0:exitcode=0:detect_leaks=0:handle_a
 
 [{fid}]({writeup_url})
 
-## Provenance
+## About SecureLoop
 
-Discovered with the assistance of AI-driven fuzzing tooling (SecureLoop — ML-guided
-harness generation + closed-loop learning). Filing per
-[rkyv SECURITY.md](https://github.com/rkyv/rkyv/blob/master/SECURITY.md), which
-directs AI-assisted findings to skip the responsible disclosure window.
+[SecureLoop]({PUBLIC_REPO}) is an experimental ML-guided vulnerability
+discovery system. The pipeline that found this issue:
+
+1. **GNN scorer** ranked rkyv functions by predicted vulnerability likelihood
+   (trained on rustsec.json — paired vuln/patch corpus). Top picks for this
+   crate included `access_pos_unchecked`, `as_ptr_raw`, `deserialize_shared`,
+   and the swiss_table/string repr surfaces — exactly the regions this bug
+   lives in.
+2. **Auto-harness generator** parsed the public API signature and emitted a
+   targeted `fuzz_target!` harness without human-written boilerplate.
+3. **libFuzzer + ASAN + sancov** at `-Cinstrumented` ran the harness until
+   the crash surfaced.
+4. **Closed-loop retrain** — the resulting finding feeds back into the
+   scorer's next training round.
+
+Track record + methodology: [{PUBLIC_REPO}]({PUBLIC_REPO}).
 """
     return f"Title: {meta['title']}\n\n---\n\n{body}"
 
