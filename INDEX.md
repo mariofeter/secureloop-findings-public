@@ -18,6 +18,12 @@ and (where filed) the upstream issue tracker.
 | 2026-05-006 | reachable assertion | high | PUBLIC-DISCLOSED | [swiss_table_unchecked_assert](findings/rkyv/2026-05-006_swiss_table_unchecked_assert/writeup.md) | [rkyv#667](https://github.com/rkyv/rkyv/issues/667) |
 | 2026-05-008 | OOB read (SEGV) | medium-high | PUBLIC-DISCLOSED | [hashmap_archivedstring_deserialize_segv](findings/rkyv/2026-05-008_hashmap_archivedstring_deserialize_segv/writeup.md) | [rkyv#669](https://github.com/rkyv/rkyv/issues/669) |
 
+### pulldown-cmark 0.13.3 (1 finding)
+
+| ID | Bug class | Severity | Status | Writeup | Upstream issue |
+|---|---|---|---|---|---|
+| 2026-05-007 | reachable panic | medium | PUBLIC-DISCLOSED | [parser_panic](findings/pulldown-cmark/2026-05-007_parser_panic/writeup.md) | [pulldown-cmark#1097](https://github.com/pulldown-cmark/pulldown-cmark/issues/1097) |
+
 ---
 
 ## By bug class (CWE)
@@ -31,8 +37,9 @@ and (where filed) the upstream issue tracker.
 ### CWE-416: Use-After-Free (1)
 - `2026-05-005` rkyv — UAF in `ArchivedString::deserialize` on crafted struct with `String` field
 
-### CWE-617: Reachable Assertion (1)
+### CWE-617: Reachable Assertion / Panic (2)
 - `2026-05-006` rkyv — `debug_assert!` violation in `swiss_table::table::control_raw` triggered by safe API
+- `2026-05-007` pulldown-cmark — `Option::unwrap()` on `None` in `parse.rs:2367` via crafted markdown input
 
 ---
 
@@ -56,3 +63,4 @@ All 6 findings are reachable via **safe public APIs** (`rkyv::from_bytes::<T>` o
 
 - **2026-05-11**: First 5 deterministic findings discovered + writeups produced + private disclosure email to rkyv maintainer
 - **2026-05-12**: rkyv `SECURITY.md` updated — AI-discovered findings skip embargo. Findings filed in public tracker. Autonomous rotator surfaced finding 008 (3 min from empty corpus, ML-prioritised harness); filed as rkyv#669.
+- **2026-05-19**: pulldown-cmark finding 007 filed public — coordinated disclosure completed, fix in PR #1096.
