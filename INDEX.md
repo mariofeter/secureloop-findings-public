@@ -45,8 +45,7 @@ and (where filed) the upstream issue tracker.
 
 ## By API surface
 
-All 6 findings are reachable via **safe public APIs** (`rkyv::from_bytes::<T>` or
-`rkyv::access::<T>`). None require `unsafe` blocks in user code.
+All 7 findings are reachable via **safe public APIs**. None require `unsafe` blocks in user code.
 
 ---
 
@@ -54,7 +53,7 @@ All 6 findings are reachable via **safe public APIs** (`rkyv::from_bytes::<T>` o
 
 | Status | Count | Findings |
 |---|---|---|
-| PUBLIC-DISCLOSED, awaiting fix | 6 | 2026-05-001/002/003/005/006/008 |
+| PUBLIC-DISCLOSED, awaiting fix | 7 | 2026-05-001/002/003/005/006/007/008 |
 | TRIAGE-FLAKY (held back) | 1 | `004 vec_hashmap_uaf` — non-deterministic reproduction, not published |
 
 ---
